@@ -4,8 +4,8 @@
  */
 define(['N/ui/serverWidget'],
     /**
- * @param{serverWidget} serverWidget
- */
+     * @param{serverWidget} serverWidget
+     */
     (serverWidget) => {
         /**
          * Defines the function definition that is executed before record is loaded.
@@ -17,40 +17,40 @@ define(['N/ui/serverWidget'],
          * @since 2015.2
          */
         const beforeLoad = (scriptContext) => {
-            let method = 'UE OnAccount beforeLoad';
+            let method = 'UE PE OnAccount beforeLoad';
             let form = scriptContext.form;
-            let colombianAccountFields = ['custrecord_ks_co_clase','custrecord_ks_co_grupo','custrecord_ks_co_cuenta','custrecord_ks_co_subcuenta','custrecord_ks_co_cuenta_auxiliar','custrecord_kis_numero_cuenta','custrecord_co_ks_formato','custrecord_co_ks_concepto'];
+            let peruvianAccountFields = ['custrecord_ks_pe_nivel1', 'custrecord_ks_pe_nivel2', 'custrecord_ks_pe_nivel3', 'custrecord_ks_pe_nivel4', 'custrecord_ks_pe_nivel5'];
             form.addTab({
-                id : 'custpage_ks_co_accounttab',
-                label : 'KS Colombia'
+                id: 'custpage_ks_pe_accounttab',
+                label: 'KS Perú'
             });
             form.addFieldGroup({
-                id : 'custpage_ks_co_accountgroup',
-                label : 'Colombia',
-                tab:'custpage_ks_co_accounttab'
+                id: 'custpage_ks_pe_accountgroup',
+                label: 'Perú',
+                tab: 'custpage_ks_pe_accounttab'
             });
             let hideFields = form.addField({
-                id : 'custpage_ks_co_accounttab',
-                type : serverWidget.FieldType.TEXT,
-                label : 'KS CO ACCOUNT FORM PROTOCOL',
-                container:'custpage_ks_co_accountgroup'
+                id: 'custpage_ks_pe_accounttab',
+                type: serverWidget.FieldType.TEXT,
+                label: 'KS PE ACCOUNT FORM PROTOCOL',
+                container: 'custpage_ks_pe_accountgroup'
             });
             hideFields.updateDisplayType({
-                displayType : serverWidget.FieldDisplayType.HIDDEN
+                displayType: serverWidget.FieldDisplayType.HIDDEN
             });
-            
-            for (let index = 0; index < colombianAccountFields.length; index++) {
-                const fieldId = colombianAccountFields[index];
+
+            for (let index = 0; index < peruvianAccountFields.length; index++) {
+                const fieldId = peruvianAccountFields[index];
                 let field = form.getField({
-                    id : fieldId
+                    id: fieldId
                 });
                 form.insertField({
-                    field : field,
-                    nextfield : 'custpage_ks_co_accounttab'
+                    field: field,
+                    nextfield: 'custpage_ks_pe_accounttab'
                 });
             }
-            
+
         }
-        return {beforeLoad}
+        return { beforeLoad }
 
     });

@@ -2,9 +2,9 @@
  * @NApiVersion 2.1
  * @NScriptType UserEventScript
  */
-define(['N/transaction','../ks-co-functions/ks-co-core'],
-    (transaction,core) => {
-        
+define(['N/transaction', '../ks-pe-functions/ks-pe-core'],
+    (transaction, core) => {
+
         /**
          * Defines the function definition that is executed before record is loaded.
          * @param {Object} scriptContext
@@ -28,15 +28,15 @@ define(['N/transaction','../ks-co-functions/ks-co-core'],
          */
         const beforeSubmit = (scriptContext) => {
             let method = 'On Transactions beforeSubmit'
-            if(scriptContext.type!='delete'){
+            if (scriptContext.type != 'delete') {
                 let newRecord = scriptContext.newRecord;
-                let recordType = newRecord.type; 
-                if(recordType==transaction.Type.JOURNAL_ENTRY){
+                let recordType = newRecord.type;
+                if (recordType == transaction.Type.JOURNAL_ENTRY) {
                     const lineType = 'line';
                     let lineCount = newRecord.getLineCount({
                         sublistId: lineType
                     });
-                    if(lineCount>0){
+                    if (lineCount > 0) {
                         for (let l = 0; l < lineCount; l++) {
                             let currentLineEntity = newRecord.getSublistValue({
                                 sublistId: lineType,
@@ -48,8 +48,8 @@ define(['N/transaction','../ks-co-functions/ks-co-core'],
                                 fieldId: 'custcol_ks_name',
                                 line: l
                             })
-                            
-                            if(currentLineEntity!=currentLineKsName){//Se copia la entidad de la linea en Journals y se pega en el KS Name
+
+                            if (currentLineEntity != currentLineKsName) { //Se copia la entidad de la linea en Journals y se pega en el KS Name
                                 newRecord.setSublistValue({
                                     sublistId: lineType,
                                     fieldId: 'custcol_ks_name',
@@ -68,7 +68,7 @@ define(['N/transaction','../ks-co-functions/ks-co-core'],
                                 fieldId: 'custcol_ks_journal_tax_line',
                                 line: l
                             })
-                            if(currentLineTaxAccount!=currentLineKsTaxAccount){//Se copia la cuenta de impuestos del Journal y se pega en el campo de localización
+                            if (currentLineTaxAccount != currentLineKsTaxAccount) { //Se copia la cuenta de impuestos del Journal y se pega en el campo de localización
                                 newRecord.setSublistValue({
                                     sublistId: lineType,
                                     fieldId: 'custcol_ks_journal_tax_line',
@@ -79,8 +79,8 @@ define(['N/transaction','../ks-co-functions/ks-co-core'],
                         }
                     }
                 }
-                
-            }            
+
+            }
         }
 
         /**
@@ -95,6 +95,6 @@ define(['N/transaction','../ks-co-functions/ks-co-core'],
 
         }
 
-        return {beforeLoad, beforeSubmit, afterSubmit}
+        return { beforeLoad, beforeSubmit, afterSubmit }
 
     });

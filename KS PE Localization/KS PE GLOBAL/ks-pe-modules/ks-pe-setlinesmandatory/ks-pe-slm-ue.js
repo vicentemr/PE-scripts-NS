@@ -4,7 +4,7 @@
  */
 define([
     'N/search', 'N/error',
-    '../../ks-co-functions/ks-co-core'
+    '../../ks-pe-functions/ks-pe-core'
 ], (search, error, core) => {
     /**
      * Defines the function definition that is executed before record is loaded.
@@ -29,20 +29,20 @@ define([
                 if (arrFiledsToSetMandatories.length > 0) {
                     for (var index = 0; index < arrFiledsToSetMandatories.length; index++) {
                         var strField = arrFiledsToSetMandatories[index];
-                        if(strField){
+                        if (strField) {
                             var arrField = strField.split(':');
-                            if(arrField.length==2){
+                            if (arrField.length == 2) {
                                 var fieldSublit = form.getSublist({
                                     id: arrField[0]
                                 });
-                                if(fieldSublit){
+                                if (fieldSublit) {
                                     var nsField = fieldSublit.getField({
                                         id: arrField[1]
                                     })
-                                    if(nsField){
+                                    if (nsField) {
                                         nsField.isMandatory = true;
-                                    }                                    
-                                }                                
+                                    }
+                                }
                             }
                         }
                     }
@@ -56,7 +56,7 @@ define([
         }
     }
 
-    const getSetup = function (form) {
+    const getSetup = function(form) {
         var method = 'ksSFLM.getSetup';
         var controlError = false;
         var result = null;

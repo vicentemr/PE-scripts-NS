@@ -5,12 +5,12 @@
  */
 define([
     'N/transaction',
-    './ks-co-modules/ks-co-onentities-client'
-],function(
+    './ks-pe-modules/ks-pe-onentities-client'
+], function(
     transaction,
     onentities
 ) {
-    
+
     /**
      * Function to be executed after page is initialized.
      *
@@ -20,8 +20,7 @@ define([
      *
      * @since 2015.2
      */
-    function pageInit(scriptContext) {
-    }
+    function pageInit(scriptContext) {}
 
     /**
      * Function to be executed when field is changed.
@@ -157,7 +156,7 @@ define([
         return result;
     }
 
-    function localizationContextEnter(scriptContext){
+    function localizationContextEnter(scriptContext) {
         onentities.localizationContextEnter(scriptContext);
     }
 
@@ -172,7 +171,7 @@ define([
         //validateInsert: validateInsert,
         //validateDelete: validateDelete,
         saveRecord: saveRecord,
-        localizationContextEnter:localizationContextEnter
+        localizationContextEnter: localizationContextEnter
     };
-    
+
 });

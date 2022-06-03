@@ -1,19 +1,15 @@
 /**
  * @NApiVersion 2.1
  */
-define(['N/search','N/log'],
+define(['N/search', 'N/log'],
 
-    (search,_log) => {
-        /**
-         * KS CO LOC Activate Modules by Subsidiary
-         * customrecord_ks_co_loc_activatemodbysubs
-         */
+    (search, _log) => {
         const Setup = {};
         const getSetup = () => {
             let method = 'getSetup';
-            if(Object.keys(Setup).length==0){
+            if (Object.keys(Setup).length == 0) {
                 var setUpSearch = search.create({
-                    type: 'customrecord_ks_co_localization_setup',
+                    type: 'customrecord_ks_pe_localization_setup',
                     filters: [
                         search.createFilter({
                             name: 'isinactive',
@@ -23,16 +19,16 @@ define(['N/search','N/log'],
                     ],
                     columns: [
                         search.createColumn({
-                            name: 'custrecord_ks_co_loc_subsidiaries',
+                            name: 'custrecord_ks_pe_loc_subsidiaries',
                             label: 'subsidiaraies'
                         }),
                         search.createColumn({
-                            name: 'custrecord_ks_co_modules',
+                            name: 'custrecord_ks_pe_modules',
                             label: 'modules'
                         })
                     ]
                 });
-                let setupResults = jsonSearch(setUpSearch);    
+                let setupResults = jsonSearch(setUpSearch);
                 for (let index = 0; index < setupResults.length; index++) {
                     const result = setupResults[index];
                     let subsidiaraies = result['subsidiaraies'].split(',');
@@ -43,13 +39,13 @@ define(['N/search','N/log'],
             }
             return Setup;
         }
-        const log = (type,method,details) =>{
+        const log = (type, method, details) => {
             _log[String(type).toLowerCase()]({
-                title:method,
-                details:details
+                title: method,
+                details: details
             })
-        } 
-        const jsonSearch = (searchDetails,options) => {
+        }
+        const jsonSearch = (searchDetails, options) => {
             var results = [];
             var method = 'searchToJson';
             if (!options) {
@@ -60,7 +56,7 @@ define(['N/search','N/log'],
             }
             var searchResults = searchDetails.run().getRange(options);
             if (searchResults && searchResults.length > 0) {
-                searchResults.forEach(function (searchResult) {
+                searchResults.forEach(function(searchResult) {
                     var columns = searchResult.columns;
                     var recId = searchResult.id;
                     var recType = searchResult.type;
@@ -69,7 +65,7 @@ define(['N/search','N/log'],
                     thisResult.internalid = recId;
                     thisResult.type = recType;
                     if (columns) {
-                        columns.forEach(function (column) {
+                        columns.forEach(function(column) {
                             var column_key = column.label || column.name;
                             thisResult[column_key] = searchResult.getValue(column)
                         })
@@ -79,8 +75,8 @@ define(['N/search','N/log'],
             }
             return results
         }
-        const transactionLineTypes = ['line','item','expense'];
+        const transactionLineTypes = ['line', 'item', 'expense'];
 
-        return { getSetup,log,jsonSearch,transactionLineTypes }
+        return { getSetup, log, jsonSearch, transactionLineTypes }
 
     });

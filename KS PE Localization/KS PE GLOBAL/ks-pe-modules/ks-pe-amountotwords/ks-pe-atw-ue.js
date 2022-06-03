@@ -3,10 +3,8 @@
  * @NScriptType UserEventScript
  */
 define([
-    'N/query', 'N/record', 'N/search'
-    , './ks-co-atw-api'
-    , '../../ks-co-functions/ks-co-core'
-],
+        'N/query', 'N/record', 'N/search', './ks-pe-atw-api', '../../ks-pe-functions/ks-pe-core'
+    ],
 
     /**
      * @param{query} query
@@ -14,9 +12,7 @@ define([
      * @param{search} search
      */
     (
-        query, record, search
-        , awtApi
-        , core
+        query, record, search, awtApi, core
     ) => {
 
         /**
@@ -41,7 +37,7 @@ define([
                 var recType = newRecord.type;
 
                 var resulConfig = KS_AWT_userEvent.fnGetConfiguration(strSubsidiary, strCurrency, strTransactionType);
-                if(resulConfig.length==0){
+                if (resulConfig.length == 0) {
                     return;
                 }
                 var fields = KS_AWT_userEvent.fnGetFields(resulConfig);
@@ -59,7 +55,7 @@ define([
                     if (strAmountField) {
                         strTotal = newRecord.getValue(strAmountField);
                     }
-                    core.log('DEBUG', method, 'strTotal:'+strTotal+' strOrderPhrase: ' + strOrderPhrase + '| strTypeLanguage: ' + strTypeLanguage + ' | strTypeATW: ' + strTypeATW + ' | strTypePhrase' + strTypePhrase + ' |strCurrencyPlural: ' + strCurrencyPlural + ' | strCurrencySingular: ' + strCurrencySingular + ' | strCentPlural: ' + strCentPlural + ' | strCentSingular: ' + strCentSingular);
+                    core.log('DEBUG', method, 'strTotal:' + strTotal + ' strOrderPhrase: ' + strOrderPhrase + '| strTypeLanguage: ' + strTypeLanguage + ' | strTypeATW: ' + strTypeATW + ' | strTypePhrase' + strTypePhrase + ' |strCurrencyPlural: ' + strCurrencyPlural + ' | strCurrencySingular: ' + strCurrencySingular + ' | strCentPlural: ' + strCentPlural + ' | strCentSingular: ' + strCentSingular);
 
                     var jsonCustomLanguage = search.lookupFields({
                         type: "customrecord_ks_languaje_for_atw",
@@ -70,9 +66,9 @@ define([
                     var strConector = jsonCustomLanguage.custrecord_ks_connector_of_cents;
 
                     awtApi.numberToWords.i18n[jsonCustomLanguage.name] = JSON.parse(jsonCustomLanguage.custrecord_ks_json_languaje);
-                
+
                     var strResult = KS_AWT_userEvent.fnATW(String(strTotal), strTypeLanguage, strTypeATW, strTypePhrase, strCurrencyPlural, strCurrencySingular, strCentPlural, strCentSingular, strConector, strOrderPhrase);
-                    core.log('debug',method,'strResult'+strResult)
+                    core.log('debug', method, 'strResult' + strResult)
                     var values = {};
                     values['custbody_ks_amount_to_words'] = strResult;
                     record.submitFields({
@@ -84,8 +80,7 @@ define([
                         }
                     })
                     core.log('DEBUG', method, "valor en letras: " + strResult);
-                }
-                else {
+                } else {
                     core.log('DEBUG', method, "No vienen Campos para la configuracion");
                 }
 
@@ -94,10 +89,9 @@ define([
             }
         }
 
-        function KS_AWT_userEvent(){}
-        KS_AWT_userEvent.fnGetConfiguration = function(strSubsidiary,strCurrency,strTransactionType)
-        {
-            var method= "KS_AWT_userEvent.fnGetConfiguration";
+        function KS_AWT_userEvent() {}
+        KS_AWT_userEvent.fnGetConfiguration = function(strSubsidiary, strCurrency, strTransactionType) {
+            var method = "KS_AWT_userEvent.fnGetConfiguration";
             try {
                 var filters = [];
                 filters.push(search.createFilter({
@@ -123,8 +117,8 @@ define([
                     join: null,
                     operator: search.Operator.ANYOF,
                     values: strTransactionType
-                }));               
-                
+                }));
+
                 return search.create({
                     type: "customrecord_ks_amount_to_words_config",
                     filters: filters,
@@ -136,122 +130,95 @@ define([
                 core.log('ERROR', method, e);
             }
         }
-        KS_AWT_userEvent.fnGetFields = function(resulConfig)
-        {
+        KS_AWT_userEvent.fnGetFields = function(resulConfig) {
             var method = "KS_AWT_userEvent.fnGetFields";
             var result = null;
             try {
-                if(resulConfig)
-                {
+                if (resulConfig) {
                     var config = {};
-                    resulConfig.forEach(function(_element)
-                    {
+                    resulConfig.forEach(function(_element) {
                         var nlapiConfig = record.load({
                             type: "customrecord_ks_amount_to_words_config",
                             id: _element.id
                         })
-                        
+
                         var fields = nlapiConfig.getFields();
-                        fields.forEach(function(element)
-                        {
-                            if(element.indexOf("custrecord_ks") != -1)
-                            {
+                        fields.forEach(function(element) {
+                            if (element.indexOf("custrecord_ks") != -1) {
                                 config[element] = nlapiConfig.getValue(element);
-                                if(element.indexOf("custrecord_ks_atw_transaction_type") != -1)
+                                if (element.indexOf("custrecord_ks_atw_transaction_type") != -1)
                                     config[element] = nlapiConfig.getValue(element);
                             }
                         });
                     });
-                    
+
                     result = config;
-                }
-                else
-                {
-                    core.log('DEBUG', method, "Subsidiary: "+subsidiary+" con currency :"+strCurrency+" sin configuracion para la transaccion.");
+                } else {
+                    core.log('DEBUG', method, "Subsidiary: " + subsidiary + " con currency :" + strCurrency + " sin configuracion para la transaccion.");
                 }
             } catch (e) {
                 core.log('ERROR', method, e);
             }
-            
+
             return result;
         }
-        KS_AWT_userEvent.fnATW = function(strTotal,strTypeLanguage,strTypeATW,strTypePhrase,strCurrencyPlural,strCurrencySingular,strCentPlural,strCentSingular, strConector, strOrderPhrase) 
-        {
+        KS_AWT_userEvent.fnATW = function(strTotal, strTypeLanguage, strTypeATW, strTypePhrase, strCurrencyPlural, strCurrencySingular, strCentPlural, strCentSingular, strConector, strOrderPhrase) {
             var method = "KS_AWT_userEvent.fnATW";
-            if(strConector == null)
-            {
+            if (strConector == null) {
                 strConector = "";
             }
             var strResult = null;
-            try 
-            {
-                if(strTotal.length >= 0)
-                {
-                    if (strTotal.indexOf(",") >= 0 || strTotal.indexOf(".") >= 0) 
-                    {
-                        if(strTotal.indexOf(",") >= 0)
+            try {
+                if (strTotal.length >= 0) {
+                    if (strTotal.indexOf(",") >= 0 || strTotal.indexOf(".") >= 0) {
+                        if (strTotal.indexOf(",") >= 0)
                             strTotal = strTotal.split(",");
                         else if (strTotal.indexOf(".") >= 0)
                             strTotal = strTotal.split(".");
-        
+
                         numPartFirts = KS_AWT_userEvent.fnGetWords(strTotal[0], strTypeLanguage);
                         numPartSecond = KS_AWT_userEvent.fnGetWords(strTotal[1], strTypeLanguage);
-        
-                        if(strTypeATW == "1")
-                        {
+
+                        if (strTypeATW == "1") {
                             strCentSingular = "";
                             strCentPlural = "";
-                    
-                            numPartSecond = strTotal[1]+"/100";
+
+                            numPartSecond = strTotal[1] + "/100";
                             /*if(parseInt(strTotal[1]) == 0)
                             {
                                 numPartSecond = "";
                                 strConector = "";
                             }*/
                         }
-        
-                        if(strOrderPhrase == 1)
-                        {
+
+                        if (strOrderPhrase == 1) {
                             strCentSingular = strCurrencyPlural;
                             strCurrencySingular = '';
                             strCentPlural = strCurrencyPlural;
                             strCurrencyPlural = '';
                         }
-                        
-                        if(strTotal[0] == "1" & strTotal[1] == "1")
-                        {
-                            strResult = numPartFirts+" "+strCurrencySingular+" "+strConector+" "+numPartSecond+" "+strCentSingular;
+
+                        if (strTotal[0] == "1" & strTotal[1] == "1") {
+                            strResult = numPartFirts + " " + strCurrencySingular + " " + strConector + " " + numPartSecond + " " + strCentSingular;
+                        } else if (strTotal[0] == "1") {
+                            strResult = numPartFirts + " " + strCurrencySingular + " " + strConector + " " + numPartSecond + " " + strCentPlural;
+                        } else if (strTotal[1] == "1") {
+                            strResult = numPartFirts + " " + strCurrencyPlural + " " + strConector + " " + numPartSecond + " " + strCentSingular;
+                        } else {
+                            strResult = numPartFirts + " " + strCurrencyPlural + " " + strConector + " " + numPartSecond + " " + strCentPlural;
                         }
-                        else if(strTotal[0] == "1")
-                        {
-                            strResult = numPartFirts+" "+strCurrencySingular+" "+strConector+" "+numPartSecond+" "+strCentPlural;	
-                        }
-                        else if(strTotal[1] == "1")
-                        {
-                            strResult = numPartFirts+" "+strCurrencyPlural+" "+strConector+" "+numPartSecond+" "+strCentSingular;	
-                        }
-                        else
-                        {
-                            strResult = numPartFirts+" "+strCurrencyPlural+" "+strConector+" "+numPartSecond+" "+strCentPlural;		
+                    } else {
+                        core.log('debug', method, 'entra a sin decimales')
+                        numPartFirts = KS_AWT_userEvent.fnGetWords(strTotal, strTypeLanguage);
+
+                        if (strTotal == "1") {
+                            strResult = numPartFirts + " " + strCurrencySingular;
+                        } else {
+                            strResult = numPartFirts + " " + strCurrencyPlural;
                         }
                     }
-                    else 
-                    { 
-                        core.log('debug',method,'entra a sin decimales')
-                        numPartFirts = KS_AWT_userEvent.fnGetWords(strTotal, strTypeLanguage);
-                        
-                        if(strTotal == "1")
-                        {
-                            strResult = numPartFirts+" "+strCurrencySingular;
-                        }
-                        else 
-                        {
-                            strResult = numPartFirts+" "+strCurrencyPlural;
-                        }
-                    }	
-                    
-                    switch(strTypePhrase)
-                    {
+
+                    switch (strTypePhrase) {
                         case "1":
                             strResult = KS_AWT_userEvent.fnUpperCase(strResult);
                             break;
@@ -261,18 +228,15 @@ define([
                         case "3":
                             strResult = KS_AWT_userEvent.fnFirstCapitalLetterInSentence(strResult);
                             break;
-                    }			
+                    }
                 }
-            }
-            catch (e) 
-            {
+            } catch (e) {
                 core.log('ERROR', method, e);
             }
-            
+
             return strResult;
         }
-        KS_AWT_userEvent.fnFirstCapitalLetter = function (phrase) 
-        {
+        KS_AWT_userEvent.fnFirstCapitalLetter = function(phrase) {
             var result = null;
             var method = "KS_AWT_userEvent.fnFirstCapitalLetter";
             try {
@@ -282,8 +246,7 @@ define([
             }
             return result;
         }
-        KS_AWT_userEvent.fnUpperCase = function (phrase) 
-        {
+        KS_AWT_userEvent.fnUpperCase = function(phrase) {
             var result = null;
             var method = "KS_AWT_userEvent.fnUpperCase";
             try {
@@ -293,30 +256,26 @@ define([
             }
             return result;
         }
-        KS_AWT_userEvent.fnFirstCapitalLetterInSentence = function (phrase) 
-        {
-            
-            var result = ""; 
+        KS_AWT_userEvent.fnFirstCapitalLetterInSentence = function(phrase) {
+
+            var result = "";
             var method = "KS_AWT_userEvent.fnFirstCapitalLetterInSentence ";
-            try 
-            {
+            try {
                 phrase = phrase.split(" ");
                 phrase.forEach(
-                    function(element)
-                    {
-                        result += KS_AWT_userEvent.fnFirstCapitalLetter(element)+" ";
+                    function(element) {
+                        result += KS_AWT_userEvent.fnFirstCapitalLetter(element) + " ";
                     });
             } catch (e) {
                 core.log('ERROR', method, e);
             }
             return result;
         }
-        KS_AWT_userEvent.fnGetWords = function(strNum, strLanguage)
-        {
+        KS_AWT_userEvent.fnGetWords = function(strNum, strLanguage) {
             var method = "KS_AWT_userEvent.fnGetWords";
             var result = null;
             try {
-                result = awtApi.numberToWords.convert(strNum, {lang: strLanguage});
+                result = awtApi.numberToWords.convert(strNum, { lang: strLanguage });
             } catch (e) {
                 core.log('ERROR', method, e);
             }
