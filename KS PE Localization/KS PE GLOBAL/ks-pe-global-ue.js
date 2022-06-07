@@ -9,6 +9,7 @@ define([
     './ks-pe-modules/ks-pe-ontransactions-ue',
     './ks-pe-modules/ks-pe-onaccounts-ue',
     './ks-pe-modules/ks-pe-amountotwords/ks-pe-atw-ue',
+    './ks-pe-modules/ks-pe-detractiononsales/ks-pe-detraonsales-ue',
     // './ks-pe-modules/ks-pe-setlinesmandatory/ks-pe-slm-ue'
 ], (transaction,
     record,
@@ -16,6 +17,7 @@ define([
     onTransactions,
     onAccounts,
     amounttowords,
+    detractionOnSales
     // setlinesmandatory
 ) => {
     /**
@@ -116,8 +118,12 @@ define([
                         });
                         if (recordSubsidiary && setup[recordSubsidiary]) {
                             let subsidiaryModules = setup[recordSubsidiary];
-                            if (subsidiaryModules.indexOf('amounttowords')) {
+                            if (subsidiaryModules.indexOf('amounttowords') != -1) {
                                 amounttowords.afterSubmit(scriptContext);
+                            }
+
+                            if (subsidiaryModules.indexOf('detractiononsales') != -1) {
+                                detractionOnSales.afterSubmit(scriptContext);
                             }
 
                         }
@@ -129,6 +135,6 @@ define([
         }
     }
 
-    return { beforeLoad, beforeSubmit, /*afterSubmit*/ }
+    return { beforeLoad, beforeSubmit, afterSubmit }
 
 });
